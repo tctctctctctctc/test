@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="input" />
+      <input type="button" value="encode" onclick="changeTo64()" />
+      <input type="button" value="decode" onclick="changeTo10()" />
+    </div>
+    <div id="view" style="border: 1px solid #ccc; height: 30px"></div>
+  </body>
+  <script>
+    function string10to64(number) {
+      let chars =
+        "0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ-~".split(
+          ""
+        );
+      let strNum = String(number);
+      if (strNum[0] === "-") {
+        let newNum = strNum.substr(1);
+        return "-" + string10to64(newNum);
+      }
+      if (strNum.includes(".")) {
+        let numArr = strNum.split(".");
+        return string10to64(numArr[0]) + "." + string10to64(numArr[1]);
+      }
+      let radix = chars.length,
+        qutient = +number,
+        arr = [];
+      do {
+        mod = qutient % radix;
+        qutient = (qutient - mod) / radix;
+        arr.unshift(chars[mod]);
+      } while (qutient);
+      return arr.join("");
+    }
+
+    function string64to10(code) {
+      let chars =
+          "0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ-~",
+        radix = chars.length,
+        newCode = String(code),
+        len = newCode.length,
+        i = 0,
+        originNumber = 0;
+      if (newCode[0] === "-") {
+        let newNum = newCode.substr(1);
+        return "-" + string64to10(newNum);
+      }
+      if (newCode.includes(".")) {
+        let numArr = newCode.split(".");
+        return string64to10(numArr[0]) + "." + string64to10(numArr[1]);
+      }
+
+      while (i < len) {
+        originNumber +=
+          Math.pow(radix, i++) * chars.indexOf(newCode.charAt(len - i) || 0);
+      }
+      return originNumber;
+    }
+    function changeTo64() {
+      let input = document.getElementById("input").value;
+      document.getElementById("view").innerHTML = string10to64(input);
+    }
+    function changeTo10() {
+      let input = document.getElementById("input").value;
+      document.getElementById("view").innerHTML = string64to10(input);
+    }
+  </script>
+</html>
