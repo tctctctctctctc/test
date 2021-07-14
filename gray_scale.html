@@ -6,29 +6,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body>
-    <input type="file" name="" id="input" onchange="onChange" />
+  <body style="overflow: hidden">
+    <input type="file" name="" id="input" onchange="onChange()" />
     <canvas
-      style="width: 480px; height: 320px; border: 1px"
+      style="width: 600px; height: 600px; border: 1px solid"
       id="canvas"
     ></canvas>
+    <!-- <img src="" alt="" id="js-image" /> -->
   </body>
 </html>
 <script>
+  //   var imgObj = document.getElementById("js-image");
   let mycanvas = document.getElementById("canvas");
   let ctx = mycanvas.getContext("2d");
+  //   function gray() {
+  //     var canvas = document.createElement("canvas");
 
+  //     var canvasContext = canvas.getContext("2d");
+
+  //     var imgW = imgObj.width;
+
+  //     var imgH = imgObj.height;
+
+  //     canvas.width = imgW;
+
+  //     canvas.height = imgH;
+
+  //     canvasContext.drawImage(imgObj, 0, 0);
+
+  //     var imgPixels = canvasContext.getImageData(0, 0, imgW, imgH);
+
+  //     for (var y = 0; y < imgPixels.height; y++) {
+  //       for (var x = 0; x < imgPixels.width; x++) {
+  //         var i = y * 4 * imgPixels.width + x * 4;
+
+  //         var avg =
+  //           (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) /
+  //           3;
+
+  //         imgPixels.data[i] = avg;
+
+  //         imgPixels.data[i + 1] = avg;
+
+  //         imgPixels.data[i + 2] = avg;
+  //       }
+  //     }
+
+  //     canvasContext.putImageData(
+  //       imgPixels,
+  //       0,
+  //       0,
+  //       0,
+  //       0,
+  //       imgPixels.width,
+  //       imgPixels.height
+  //     );
+
+  //     return canvas.toDataURL();
+  //   }
   function onChange() {
-    let file = file.files[0];
+    let file = document.getElementById("input").files[0];
     let reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function (e) {
       let img = new Image();
       img.onload = function () {
-        // 将图片画到canvas上面上去！
-        ctx.drawImage(img, 100, 100);
+        //   将图片画到canvas上面上去！
+
+        var imgW = img.width;
+
+        var imgH = img.height;
+
+        mycanvas.width = imgW;
+
+        mycanvas.height = imgH;
+        ctx.drawImage(img, 0, 0, imgW, imgH);
+        img.remove();
+        var imgPixels = ctx.getImageData(0, 0, imgW, imgH);
+        for (var y = 0; y < imgPixels.height; y++) {
+          for (var x = 0; x < imgPixels.width; x++) {
+            var i = y * 4 * imgPixels.width + x * 4;
+
+            var avg =
+              (imgPixels.data[i] +
+                imgPixels.data[i + 1] +
+                imgPixels.data[i + 2]) /
+              3;
+
+            imgPixels.data[i] = avg;
+
+            imgPixels.data[i + 1] = avg;
+
+            imgPixels.data[i + 2] = avg;
+          }
+        }
+        ctx.putImageData(
+          imgPixels,
+          0,
+          0,
+          0,
+          0,
+          imgPixels.width,
+          imgPixels.height
+        );
       };
+      //   imgObj.src = this.result;
+      //   let a = false;
+      //   imgObj.onload = function () {
+      //     if (!a) {
+      //       imgObj.src = gray(imgObj);
+      //       a = !a;
+      //     }
+      //   };
+      img.setAttribute("style", "opacity:0");
+      document.getElementsByTagName("body")[0].append(img);
       img.src = this.result;
+      //   window.console.log(this.result);
     };
   }
 </script>
